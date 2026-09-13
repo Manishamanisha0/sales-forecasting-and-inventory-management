@@ -1,4 +1,15 @@
-import joblib
+import json
 
-joblib.dump(model, "sales_forecasting_model.pkl")
-joblib.dump(forecast_features, "forecast_features.pkl")
+# X must be the SAME feature DataFrame used to train your model
+# Example:
+# X = pd.get_dummies(X, drop_first=True)
+# X = X.fillna(0)
+
+forecast_features = X.columns.tolist()
+
+# Save feature names as JSON
+with open("forecast_features.json", "w") as f:
+    json.dump(forecast_features, f, indent=4)
+
+print("forecast_features.json created successfully!")
+print(forecast_features)
