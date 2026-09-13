@@ -1,61 +1,33 @@
-import streamlit as st
-import joblib
-import json
 import os
-from pathlib import Path
+import json
+import joblib
+import streamlit as st
 
-# ---------------------------------
-# Project directory
-# ---------------------------------
-BASE_DIR = Path(__file__).resolve().parent
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-model_path = BASE_DIR / "sales_forecasting_model.pkl"
-features_path = BASE_DIR / "forecast_features.json"
+model_path = os.path.join(
+    BASE_DIR,
+    "sales_forecasting_model.pkl"
+)
 
-# ---------------------------------
-# Check model file
-# ---------------------------------
-if not model_path.exists():
-    st.error(f"Model file not found: {model_path}")
-    st.write("Files available:", os.listdir(BASE_DIR))
+features_path = os.path.join(
+    BASE_DIR,
+    "forecast_features.json"
+)
+
+if not os.path.exists(model_path):
+    st.error("sales_forecasting_model.pkl not found.")
     st.stop()
 
-if not model_path.is_file():
-    st.error("sales_forecasting_model.pkl is not a file.")
+if not os.path.exists(features_path):
+    st.error("forecast_features.json not found.")
     st.stop()
 
-# ---------------------------------
-# Check feature file
-# ---------------------------------
-if not features_path.exists():
-    st.error(f"Feature file not found: {features_path}")
-    st.stop()
-
-# ---------------------------------
 # Load model
-# ---------------------------------
-try:
-    st.write("Loading model...")
+model = joblib.load(model_path)
 
-    model = joblib.load(str(model_path))
-
-    st.success("Model loaded successfully!")
-
-except Exception as e:
-    st.error(f"Error loading model: {repr(e)}")
-    st.write("Model path:", str(model_path))
-    st.write("Model size:", model_path.stat().st_size, "bytes")
-    st.stop()
-
-# ---------------------------------
 # Load features
-# ---------------------------------
-try:
-    with open(features_path, "r", encoding="utf-8") as f:
-        forecast_features = json.load(f)
+with open(features_path, "r") as f:
+    forecast_features = json.load(f)
 
-    st.success("Features loaded successfully!")
-
-except Exception as e:
-    st.error(f"Error loading features: {repr(e)}")
-    st.stop()
+st.success("Model and features loaded successfully!")
