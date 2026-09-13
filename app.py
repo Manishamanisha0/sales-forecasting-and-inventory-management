@@ -1,7 +1,7 @@
-import os
-import json
-import joblib
 import streamlit as st
+import joblib
+import json
+import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,19 +15,29 @@ features_path = os.path.join(
     "forecast_features.json"
 )
 
-if not os.path.exists(model_path):
+# Check model
+if not os.path.isfile(model_path):
     st.error("sales_forecasting_model.pkl not found.")
     st.stop()
 
-if not os.path.exists(features_path):
+# Check features
+if not os.path.isfile(features_path):
     st.error("forecast_features.json not found.")
     st.stop()
 
 # Load model
-model = joblib.load(model_path)
+try:
+    model = joblib.load(model_path)
+except Exception as e:
+    st.error(f"Error loading model: {repr(e)}")
+    st.stop()
 
 # Load features
-with open(features_path, "r") as f:
-    forecast_features = json.load(f)
+try:
+    with open(features_path, "r", encoding="utf-8") as f:
+        forecast_features = json.load(f)
+except Exception as e:
+    st.error(f"Error loading features: {repr(e)}")
+    st.stop()
 
 st.success("Model and features loaded successfully!")
