@@ -1,0 +1,4 @@
+import joblib
+
+joblib.dump(model, "sales_forecasting_model.pkl")
+joblib.dump(forecast_features, "forecast_features.pkl")
